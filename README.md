@@ -1,34 +1,63 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Nike App Website
+
+<img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/755e5a02-aea7-4111-98ed-c910c5d3047e" />
+ <!-- Replace![nike1](https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/755e5a02-aea7-4111-98ed-c910c5d3047e)
+ with an attractive header image -->
+
+Elevate your shopping experience with the Nike App Website. Discover a world of stylish footwear and apparel, powered by modern technologies.
+
+## Features
+
+- **Home Page**: Browse through categories of products and explore the latest trends.
+- **Product Details**: Get in-depth information about each product and view high-quality images.
+- **Cart Functionality**: Add products to your cart, with persistent data across sessions.
+- **User-Friendly UI**: Enjoy a sleek and responsive user interface for easy navigation.
+- **Context API**: Efficiently manage global state using Context API for enhanced performance.
+
+## Technologies Used
+
+- **Frontend**: Developed using React and Next.js, offering server-side rendering for optimized performance.
+- **Styling**: Utilized Tailwind CSS for stylish and responsive designs.
+- **State Management**: Managed global state seamlessly using Context API.
+- **Type Safety**: Employed TypeScript for enhanced code reliability and better development experience.
+
+
+## Screenshots
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/798a1205-51a2-40ba-97c7-4bae327ffb5d" alt="Home Page" width="45%">
+  <img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/7c655ca1-02c4-43f2-99dc-1af47ab9b720" alt="Product Details" width="45%">
+</div>
+<!-- Replace with your screenshot images and adjust the width values as needed -->
+
+*Explore categories and discover the latest products. Dive into detailed product information.*
+
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/f7dc4ad3-344a-42ab-a914-5a2099515ccb" alt="Cart Functionality" width="45%">
+  <img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/7e7d278e-ec3d-4e36-bb5e-181a4b74535f" alt="Responsive Design" width="45%">
+</div>
+<!-- Replace with your screenshot images and adjust the width values as needed -->
+
+*Add items to your cart and enjoy a responsive design for various devices.*
+
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository: `git clone https://github.com/your-username/nike-app-website.git`
+2. Navigate to the project directory: `cd nike-app-website`
+3. Install dependencies: `npm install` or `yarn install`
+4. Start the development server: `npm run dev` or `yarn dev`
+5. Access the website in your browser: `http://localhost:3000`
 
-```bash
-npm run dev
-# or
-yarn dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Contributions are welcome! Feel free to submit issues and pull requests.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## License
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+This project is licensed under the [MIT License](LICENSE).
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Created by [Your Name](https://github.com/your-username) - Let's connect!
