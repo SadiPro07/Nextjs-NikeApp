@@ -55,12 +55,6 @@ struct CountdownTimerView: View {
     }
 }
 
-struct CountdownTimerView_Previews: PreviewProvider {
-    static var previews: some View {
-        CountdownTimerView(totalTime: 180) {}
-    }
-}
-
 
 
 
