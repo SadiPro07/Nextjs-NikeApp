@@ -6,6 +6,7 @@ struct SwiftUIBaseTimer: View {
     let ALERT_THRESHOLD: CGFloat = 18
     let TIME_LIMIT: CGFloat = 180
     
+    @Binding var startTimer: Bool // Binding to control when the timer should start
     @State private var timePassed: CGFloat = 0
     @State private var strokeWidth: CGFloat = 6
     
@@ -64,26 +65,22 @@ struct SwiftUIBaseTimer: View {
             }
         }
         .onAppear {
-            startTimer() // Start the timer when the view appears
+            if startTimer {
+                startTimerIfNeeded()
+            }
         }
     }
     
-    private func startTimer() {
-        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self = self else {
-                return
-            }
-            
-            self.timePassed += 1
-            if self.timeLeftValue() <= 0 {
-                timer.invalidate()
+    private func startTimerIfNeeded() {
+        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            timePassed += 1
+            if timeLeftValue() <= 0 {
+                // Handle timer completion here
             }
         }
         RunLoop.current.add(timer, forMode: .common)
     }
 }
-
-
 
 
 
