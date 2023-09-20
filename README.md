@@ -10,7 +10,43 @@ struct SwiftUIBaseTimer: View {
     @State private var timer: Timer? = nil
     @State private var strokeWidth: CGFloat = 6
 
-    // ... (other properties and methods remain the same)
+    private var circleDasharray: String {
+        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
+        let calculatedDashArray = (rawTimeFraction * FULL_DASH_ARRAY).rounded()
+        return "\(calculatedDashArray) 283"
+    }
+
+    private var TIME_LIMIT: CGFloat = 180
+
+    private func timeLeftValue() -> CGFloat {
+        return max(TIME_LIMIT - timePassed, 0)
+    }
+
+    private func timeFraction() -> CGFloat {
+        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
+        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
+    }
+
+    private func formattedTimeLeft() -> String {
+        let timeLeft = timeLeftValue()
+        let minutes = Int(timeLeft / 60)
+        let seconds = Int(timeLeft.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private func remainingPathColor() -> Color {
+        let alertColor = Color.red
+        let warningColor = Color.orange
+        let infoColor = Color.green
+
+        if timeLeftValue() <= ALERT_THRESHOLD {
+            return alertColor
+        } else if timeLeftValue() <= WARNING_THRESHOLD {
+            return warningColor
+        } else {
+            return infoColor
+        }
+    }
 
     private func startTimerIfNeeded() {
         if startTimer {
@@ -57,6 +93,7 @@ struct SwiftUIBaseTimer: View {
         })
     }
 }
+
 
 
 
