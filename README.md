@@ -46,15 +46,23 @@ struct SwiftUIBaseTimer: View {
         }
     }
 
-    private func startTimer() {
-        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            timePassed += 1
-            if timeLeftValue() <= 0 {
-                timer.invalidate()
-            }
+  private func startTimer() {
+    var timer: Timer? = nil // Declare the timer variable
+
+    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self, weak timer] _ in
+        guard let self = self, let timer = timer else {
+            return // Ensure both self and timer still exist
         }
-        RunLoop.current.add(timer, forMode: .common)
+        
+        self.timePassed += 1
+        if self.timeLeftValue() <= 0 {
+            timer.invalidate()
+        }
     }
+    
+    RunLoop.current.add(timer!, forMode: .common)
+}
+
 
     var body: some View {
         VStack {
