@@ -1,25 +1,35 @@
+import SwiftUI
 
+struct SwiftUIBaseTimer: View {
+    let FULL_DASH_ARRAY: CGFloat = 283
+    let WARNING_THRESHOLD: CGFloat = 180 / 4
+    let ALERT_THRESHOLD: CGFloat = 18
 
+    @Binding var startTimer: Bool // Binding to control when the timer should start
+    @State private var timePassed: CGFloat = 0
+    @State private var timer: Timer? = nil
+    @State private var strokeWidth: CGFloat = 6
 
-private func startTimer() {
-    var timer: Timer? = nil 
-    // Declare the timer variable
+    // ... (other properties and methods remain the same)
 
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak timer] _ in
-        guard let timer = timer else {
-            return // Ensure timer still exists
-        }
-        
-        self.timePassed += 1
-        if self.timeLeftValue() <= 0 {
-            timer.invalidate()
+    private func startTimerIfNeeded() {
+        if startTimer {
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+
+                self.timePassed += 1
+                if self.timeLeftValue() <= 0 {
+                    self.timer?.invalidate()
+                }
+            }
+
+            if let timer = timer {
+                RunLoop.current.add(timer, forMode: .common)
+            }
         }
     }
-    
-    RunLoop.current.add(timer!, forMode: .common)
-}
-
-
 
     var body: some View {
         VStack {
@@ -40,16 +50,14 @@ private func startTimer() {
             }
         }
         .onAppear(perform: {
-            startTimer()
+            startTimerIfNeeded()
+        })
+        .onDisappear(perform: {
+            timer?.invalidate()
         })
     }
 }
 
-struct SwiftUIBaseTimer_Previews: PreviewProvider {
-    static var previews: some View {
-        SwiftUIBaseTimer()
-    }
-}
 
 
 # Nike App Website
