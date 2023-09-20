@@ -65,20 +65,21 @@ struct SwiftUIBaseTimer: View {
             }
         }
         .onAppear {
-            startTimer()
+            self.startTimer()
         }
     }
     
     private func startTimer() {
         let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            currentTime += 1
-            if currentTime >= TIME_LIMIT {
+            self.currentTime += 1
+            if self.currentTime >= self.TIME_LIMIT {
                 timer.invalidate()
             }
         }
         RunLoop.current.add(timer, forMode: .common)
     }
 }
+
 
 
 
