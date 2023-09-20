@@ -1,57 +1,13 @@
-import SwiftUI
 
-struct SwiftUIBaseTimer: View {
-    let FULL_DASH_ARRAY: CGFloat = 283
-    let WARNING_THRESHOLD: CGFloat = 180 / 4
-    let ALERT_THRESHOLD: CGFloat = 18
 
-    let TIME_LIMIT: CGFloat = 180
 
-    @State private var timePassed: CGFloat = 0
-    @State private var strokeWidth: CGFloat = 6
+private func startTimer() {
+    var timer: Timer? = nil 
+    // Declare the timer variable
 
-    private var circleDasharray: String {
-        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
-        let calculatedDashArray = (rawTimeFraction * FULL_DASH_ARRAY).rounded()
-        return "\(calculatedDashArray) 283"
-    }
-
-    private func timeLeftValue() -> CGFloat {
-        return max(TIME_LIMIT - timePassed, 0)
-    }
-
-    private func timeFraction() -> CGFloat {
-        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
-        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
-    }
-
-    private func formattedTimeLeft() -> String {
-        let timeLeft = timeLeftValue()
-        let minutes = Int(timeLeft / 60)
-        let seconds = Int(timeLeft.truncatingRemainder(dividingBy: 60))
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-
-    private func remainingPathColor() -> Color {
-        let alertColor = Color.red
-        let warningColor = Color.orange
-        let infoColor = Color.green
-
-        if timeLeftValue() <= ALERT_THRESHOLD {
-            return alertColor
-        } else if timeLeftValue() <= WARNING_THRESHOLD {
-            return warningColor
-        } else {
-            return infoColor
-        }
-    }
-
-  private func startTimer() {
-    var timer: Timer? = nil // Declare the timer variable
-
-    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self, weak timer] _ in
-        guard let self = self, let timer = timer else {
-            return // Ensure both self and timer still exist
+    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak timer] _ in
+        guard let timer = timer else {
+            return // Ensure timer still exists
         }
         
         self.timePassed += 1
@@ -62,6 +18,7 @@ struct SwiftUIBaseTimer: View {
     
     RunLoop.current.add(timer!, forMode: .common)
 }
+
 
 
     var body: some View {
