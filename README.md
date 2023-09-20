@@ -4,41 +4,39 @@ struct SwiftUIBaseTimer: View {
     let FULL_DASH_ARRAY: CGFloat = 283
     let WARNING_THRESHOLD: CGFloat = 180 / 4
     let ALERT_THRESHOLD: CGFloat = 18
-
+    let TIME_LIMIT: CGFloat = 180
+    
     @Binding var startTimer: Bool // Binding to control when the timer should start
     @State private var timePassed: CGFloat = 0
-    @State private var timer: Timer? = nil
     @State private var strokeWidth: CGFloat = 6
-
+    
     private var circleDasharray: String {
         let rawTimeFraction = timeLeftValue() / TIME_LIMIT
         let calculatedDashArray = (rawTimeFraction * FULL_DASH_ARRAY).rounded()
         return "\(calculatedDashArray) 283"
     }
-
-    private var TIME_LIMIT: CGFloat = 180
-
+    
     private func timeLeftValue() -> CGFloat {
         return max(TIME_LIMIT - timePassed, 0)
     }
-
+    
     private func timeFraction() -> CGFloat {
         let rawTimeFraction = timeLeftValue() / TIME_LIMIT
         return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
     }
-
+    
     private func formattedTimeLeft() -> String {
         let timeLeft = timeLeftValue()
         let minutes = Int(timeLeft / 60)
         let seconds = Int(timeLeft.truncatingRemainder(dividingBy: 60))
         return String(format: "%02d:%02d", minutes, seconds)
     }
-
+    
     private func remainingPathColor() -> Color {
         let alertColor = Color.red
         let warningColor = Color.orange
         let infoColor = Color.green
-
+        
         if timeLeftValue() <= ALERT_THRESHOLD {
             return alertColor
         } else if timeLeftValue() <= WARNING_THRESHOLD {
@@ -47,52 +45,43 @@ struct SwiftUIBaseTimer: View {
             return infoColor
         }
     }
-
-    private func startTimerIfNeeded() {
-        if startTimer {
-            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-
-                self.timePassed += 1
-                if self.timeLeftValue() <= 0 {
-                    self.timer?.invalidate()
-                }
-            }
-
-            if let timer = timer {
-                RunLoop.current.add(timer, forMode: .common)
-            }
-        }
-    }
-
+    
     var body: some View {
         VStack {
             ZStack {
                 Circle()
                     .stroke(Color.gray, style: StrokeStyle(lineWidth: 6))
                     .frame(width: 100, height: 100)
-
+                
                 Circle()
                     .trim(from: 0, to: timeFraction())
                     .stroke(remainingPathColor(), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(-90))
-
+                
                 Text(formattedTimeLeft())
                     .font(.title)
                     .foregroundColor(.primary)
             }
         }
         .onAppear(perform: {
-            startTimerIfNeeded()
-        })
-        .onDisappear(perform: {
-            timer?.invalidate()
+            if startTimer {
+                start()
+            }
         })
     }
+    
+    private func start() {
+        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            timePassed += 1
+            if timeLeftValue() <= 0 {
+                timePassed = 0
+            }
+        }
+        RunLoop.current.add(timer, forMode: .common)
+    }
 }
+
 
 
 
