@@ -8,7 +8,7 @@ struct SwiftUIBaseTimer: View {
     
     @State private var timePassed: CGFloat = 0
     @State private var strokeWidth: CGFloat = 6
-    @State private var currentTime: CGFloat = 0
+    @State private var timerInterval: Timer?
     
     private var circleDasharray: String {
         let rawTimeFraction = timeLeftValue() / TIME_LIMIT
@@ -17,7 +17,7 @@ struct SwiftUIBaseTimer: View {
     }
     
     private func timeLeftValue() -> CGFloat {
-        return max(TIME_LIMIT - currentTime, 0)
+        return max(TIME_LIMIT - timePassed, 0)
     }
     
     private func timeFraction() -> CGFloat {
@@ -50,7 +50,7 @@ struct SwiftUIBaseTimer: View {
         VStack {
             ZStack {
                 Circle()
-                    .stroke(Color.gray, style: StrokeStyle(lineWidth: 6))
+                    .stroke(Color.gray, lineWidth: 6)
                     .frame(width: 100, height: 100)
                 
                 Circle()
@@ -65,21 +65,22 @@ struct SwiftUIBaseTimer: View {
             }
         }
         .onAppear {
-            self.startTimer()
+            startTimer()
         }
     }
     
     private func startTimer() {
-        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.currentTime += 1
-            if self.currentTime >= self.TIME_LIMIT {
-                timer.invalidate()
+        timerInterval = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.timePassed += 1
+            if self.timeLeftValue() <= 0 {
+                self.timerInterval?.invalidate()
             }
         }
-        RunLoop.current.add(timer, forMode: .common)
+        RunLoop.current.add(timerInterval!, forMode: .common)
     }
 }
-
 
 
 
