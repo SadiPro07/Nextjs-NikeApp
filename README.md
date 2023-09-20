@@ -1,3 +1,92 @@
+import SwiftUI
+
+struct SwiftUIBaseTimer: View {
+    let FULL_DASH_ARRAY: CGFloat = 283
+    let WARNING_THRESHOLD: CGFloat = 180 / 4
+    let ALERT_THRESHOLD: CGFloat = 18
+
+    let TIME_LIMIT: CGFloat = 180
+
+    @State private var timePassed: CGFloat = 0
+    @State private var strokeWidth: CGFloat = 6
+
+    private var circleDasharray: String {
+        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
+        let calculatedDashArray = (rawTimeFraction * FULL_DASH_ARRAY).rounded()
+        return "\(calculatedDashArray) 283"
+    }
+
+    private func timeLeftValue() -> CGFloat {
+        return max(TIME_LIMIT - timePassed, 0)
+    }
+
+    private func timeFraction() -> CGFloat {
+        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
+        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
+    }
+
+    private func formattedTimeLeft() -> String {
+        let timeLeft = timeLeftValue()
+        let minutes = Int(timeLeft / 60)
+        let seconds = Int(timeLeft.truncatingRemainder(dividingBy: 60))
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    private func remainingPathColor() -> Color {
+        let alertColor = Color.red
+        let warningColor = Color.orange
+        let infoColor = Color.green
+
+        if timeLeftValue() <= ALERT_THRESHOLD {
+            return alertColor
+        } else if timeLeftValue() <= WARNING_THRESHOLD {
+            return warningColor
+        } else {
+            return infoColor
+        }
+    }
+
+    private func startTimer() {
+        let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            timePassed += 1
+            if timeLeftValue() <= 0 {
+                timer.invalidate()
+            }
+        }
+        RunLoop.current.add(timer, forMode: .common)
+    }
+
+    var body: some View {
+        VStack {
+            ZStack {
+                Circle()
+                    .stroke(Color.gray, style: StrokeStyle(lineWidth: 6))
+                    .frame(width: 100, height: 100)
+
+                Circle()
+                    .trim(from: 0, to: timeFraction())
+                    .stroke(remainingPathColor(), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                    .frame(width: 100, height: 100)
+                    .rotationEffect(.degrees(-90))
+
+                Text(formattedTimeLeft())
+                    .font(.title)
+                    .foregroundColor(.primary)
+            }
+        }
+        .onAppear(perform: {
+            startTimer()
+        })
+    }
+}
+
+struct SwiftUIBaseTimer_Previews: PreviewProvider {
+    static var previews: some View {
+        SwiftUIBaseTimer()
+    }
+}
+
+
 # Nike App Website
 
 <img src="https://github.com/SadiPro07/Nextjs-NikeApp/assets/109628645/755e5a02-aea7-4111-98ed-c910c5d3047e" />
