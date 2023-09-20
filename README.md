@@ -8,6 +8,7 @@ struct SwiftUIBaseTimer: View {
     
     @State private var timePassed: CGFloat = 0
     @State private var strokeWidth: CGFloat = 6
+    @State private var currentTime: CGFloat = 0
     
     private var circleDasharray: String {
         let rawTimeFraction = timeLeftValue() / TIME_LIMIT
@@ -16,7 +17,7 @@ struct SwiftUIBaseTimer: View {
     }
     
     private func timeLeftValue() -> CGFloat {
-        return max(TIME_LIMIT - timePassed, 0)
+        return max(TIME_LIMIT - currentTime, 0)
     }
     
     private func timeFraction() -> CGFloat {
@@ -70,14 +71,15 @@ struct SwiftUIBaseTimer: View {
     
     private func startTimer() {
         let timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            timePassed += 1
-            if timeLeftValue() <= 0 {
-                // Handle timer completion here
+            currentTime += 1
+            if currentTime >= TIME_LIMIT {
+                timer.invalidate()
             }
         }
         RunLoop.current.add(timer, forMode: .common)
     }
 }
+
 
 
 
