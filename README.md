@@ -1,86 +1,66 @@
 import SwiftUI
 
-struct SwiftUIBaseTimer: View {
-    let FULL_DASH_ARRAY: CGFloat = 283
-    let WARNING_THRESHOLD: CGFloat = 180 / 4
-    let ALERT_THRESHOLD: CGFloat = 18
-    let TIME_LIMIT: CGFloat = 180
-    
-    @State private var timePassed: CGFloat = 0
-    @State private var strokeWidth: CGFloat = 6
-    @State private var timerInterval: Timer?
-    
-    private var circleDasharray: String {
-        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
-        let calculatedDashArray = (rawTimeFraction * FULL_DASH_ARRAY).rounded()
-        return "\(calculatedDashArray) 283"
+struct CountdownTimerView: View {
+    let totalTime: TimeInterval
+    let onTimesUp: () -> Void
+
+    @State private var timeRemaining: TimeInterval = 0
+    @State private var timer: Timer? = nil
+
+    let circleOpacity: Double = 0.3
+    let strokeWidth: CGFloat = 6
+
+    init(totalTime: TimeInterval, onTimesUp: @escaping () -> Void) {
+        self.totalTime = totalTime
+        self.onTimesUp = onTimesUp
     }
-    
-    private func timeLeftValue() -> CGFloat {
-        return max(TIME_LIMIT - timePassed, 0)
-    }
-    
-    private func timeFraction() -> CGFloat {
-        let rawTimeFraction = timeLeftValue() / TIME_LIMIT
-        return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
-    }
-    
-    private func formattedTimeLeft() -> String {
-        let timeLeft = timeLeftValue()
-        let minutes = Int(timeLeft / 60)
-        let seconds = Int(timeLeft.truncatingRemainder(dividingBy: 60))
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-    
-    private func remainingPathColor() -> Color {
-        let alertColor = Color.red
-        let warningColor = Color.orange
-        let infoColor = Color.green
-        
-        if timeLeftValue() <= ALERT_THRESHOLD {
-            return alertColor
-        } else if timeLeftValue() <= WARNING_THRESHOLD {
-            return warningColor
-        } else {
-            return infoColor
-        }
-    }
-    
+
     var body: some View {
         VStack {
             ZStack {
                 Circle()
-                    .stroke(Color.gray, lineWidth: 6)
+                    .trim(from: 0, to: 1)
+                    .stroke(Color.gray.opacity(circleOpacity), style: StrokeStyle(lineWidth: strokeWidth))
                     .frame(width: 100, height: 100)
-                
+
                 Circle()
-                    .trim(from: 0, to: timeFraction())
-                    .stroke(remainingPathColor(), style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
+                    .trim(from: 0, to: CGFloat(timeRemaining / totalTime))
+                    .stroke(timeRemaining <= 10 ? Color.red : timeRemaining <= 45 ? Color.orange : Color.green, style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round))
                     .frame(width: 100, height: 100)
                     .rotationEffect(.degrees(-90))
-                
-                Text(formattedTimeLeft())
-                    .font(.title)
-                    .foregroundColor(.primary)
+                    .animation(.linear(duration: 1))
             }
-        }
-        .onAppear {
-            startTimer()
+            Text("\(Int(timeRemaining))")
+                .font(.title)
+                .onAppear {
+                    startTimer()
+                }
+                .onDisappear {
+                    timer?.invalidate()
+                    timer = nil
+                }
         }
     }
-    
+
     private func startTimer() {
-        timerInterval = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            
-            self.timePassed += 1
-            if self.timeLeftValue() <= 0 {
-                self.timerInterval?.invalidate()
+        timeRemaining = totalTime
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            } else {
+                timer.invalidate()
+                onTimesUp()
             }
         }
-        RunLoop.current.add(timerInterval!, forMode: .common)
     }
 }
+
+struct CountdownTimerView_Previews: PreviewProvider {
+    static var previews: some View {
+        CountdownTimerView(totalTime: 180) {}
+    }
+}
+
 
 
 
