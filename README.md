@@ -1,100 +1,59 @@
 import SwiftUI
 
-let FULL_DASH_ARRAY = 283
-let WARNING_THRESHOLD = 180 / 4
-let ALERT_THRESHOLD = 18
+struct CustomTimerView: View {
+    let deliveryTimeRange: ClosedRange<Date>
+    @State private var elapsedTime: TimeInterval = 0.0
+    let lineWidth: CGFloat = 8.0
 
-struct BaseTimerView: View {
-    @State private var timePassed: Int = 0
-    @State private var timerInterval: Timer? = nil
-    let circleOpacity: Double
-    let strokeWidth: CGFloat = 6
-    
-    var timeLeftValue: Int {
-        return max(TIME_LIMIT - timePassed, 0)
-    }
-    
-    var timeFraction: CGFloat {
-        let rawTimeFraction = CGFloat(timeLeftValue) / CGFloat(TIME_LIMIT)
-        return rawTimeFraction - (1 / CGFloat(TIME_LIMIT)) * (1 - rawTimeFraction)
-    }
-    
-    var circleDasharray: String {
-        return "\(Int(timeFraction * CGFloat(FULL_DASH_ARRAY))) \(FULL_DASH_ARRAY)"
-    }
-    
-    var formattedTimeLeft: String {
-        let timeLeft = timeLeftValue
-        let minutes = timeLeft / 60
-        let seconds = timeLeft % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-    
-    var remainingPathColor: Color {
-        if timeLeftValue <= ALERT_THRESHOLD {
-            return Color.red
-        } else if timeLeftValue <= WARNING_THRESHOLD {
-            return Color.orange
-        } else {
-            return Color.green
-        }
-    }
-    
     var body: some View {
         VStack {
             ZStack {
                 Circle()
-                    .trim(from: 0, to: timeFraction)
-                    .stroke(style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round, lineJoin: .round))
-                    .foregroundColor(remainingPathColor)
+                    .stroke(Color.secondary, lineWidth: lineWidth)
+                    .frame(width: 100, height: 100)
+
+                Circle()
+                    .trim(from: 0.0, to: CGFloat(elapsedTime / totalTime))
+                    .stroke(Color.blue, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut)
-                
-                Circle()
-                    .stroke(style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round, lineJoin: .round))
-                    .foregroundColor(Color(white: 0.9).opacity(circleOpacity))
-                
-                Text(formattedTimeLeft)
-                    .font(.title)
+
+                Text(timerText)
+                    .font(.caption)
+                    .foregroundColor(.blue)
             }
         }
         .onAppear {
+            calculateTotalTime()
             startTimer()
         }
-        .onDisappear {
-            timerInterval?.invalidate()
+    }
+
+    var totalTime: TimeInterval = 0.0
+
+    var timerText: String {
+        let remainingTime = max(totalTime - elapsedTime, 0)
+        let minutes = Int(remainingTime) / 60
+        let seconds = Int(remainingTime) % 60
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
+
+    func calculateTotalTime() {
+        if let startDate = deliveryTimeRange.lowerBound, let endDate = deliveryTimeRange.upperBound {
+            totalTime = endDate.timeIntervalSince(startDate)
         }
     }
-    
+
     func startTimer() {
-        timerInterval = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            timePassed += 1
-            if timeLeftValue <= 0 {
-                timerInterval?.invalidate()
+        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if elapsedTime < totalTime {
+                elapsedTime += 1.0
             }
         }
+        RunLoop.current.add(timer, forMode: .common)
     }
 }
 
-struct ContentView: View {
-    var body: some View {
-        BaseTimerView(circleOpacity: 0.5)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
-struct BaseTimer_Previews: PreviewProvider {
-    static var previews: some View {
-        BaseTimerView(circleOpacity: 0.5)
-    }
-}
-
-let TIME_LIMIT = 180
 
 
 
