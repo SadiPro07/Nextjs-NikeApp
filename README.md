@@ -1,13 +1,17 @@
-import SwiftUI
+struct TimerView: View {
+    let minutes: Int
+    let seconds: Int
 
-// Calculate the progress as a value between 0 and 1
-    private func calculateProgress(_ context: Context) -> Double {
-        let currentTime = Date()
-        let deliveryTime = context.state.estimatedDeliveryTime
-        let totalTime = deliveryTime.timeIntervalSince(currentTime)
-        let progress = min(max(0, totalTime / (20 * 60)), 1) // 20 minutes in seconds
-        return progress
+    var body: some View {
+        VStack {
+            Text("\(minutes) min")
+            Text("\(seconds) sec")
+        }
+        .font(.system(size: 12))
+        .foregroundColor(.secondary)
     }
+}
+ TimerView(minutes: context.state.estimatedDeliveryTime / 60, seconds: context.state.estimatedDeliveryTime % 60)
 
 struct ContentView: View {
     @State private var elapsedTime: TimeInterval = 0.0
