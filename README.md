@@ -1,5 +1,14 @@
 import SwiftUI
 
+// Calculate the progress as a value between 0 and 1
+    private func calculateProgress(_ context: Context) -> Double {
+        let currentTime = Date()
+        let deliveryTime = context.state.estimatedDeliveryTime
+        let totalTime = deliveryTime.timeIntervalSince(currentTime)
+        let progress = min(max(0, totalTime / (20 * 60)), 1) // 20 minutes in seconds
+        return progress
+    }
+
 struct ContentView: View {
     @State private var elapsedTime: TimeInterval = 0.0
     let totalTime: TimeInterval = 20 * 60 // 20 minutes in seconds
