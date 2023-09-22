@@ -24,24 +24,22 @@ struct CustomTimerView: View {
             }
         }
         .onAppear {
-            calculateTotalTime()
             startTimer()
         }
     }
 
-    var totalTime: TimeInterval = 0.0
+    var totalTime: TimeInterval {
+        if let startDate = deliveryTimeRange.lowerBound, let endDate = deliveryTimeRange.upperBound {
+            return endDate.timeIntervalSince(startDate)
+        }
+        return 0.0 // Default value if the range is not valid
+    }
 
     var timerText: String {
         let remainingTime = max(totalTime - elapsedTime, 0)
         let minutes = Int(remainingTime) / 60
         let seconds = Int(remainingTime) % 60
         return String(format: "%02d:%02d", minutes, seconds)
-    }
-
-    func calculateTotalTime() {
-        if let startDate = deliveryTimeRange.lowerBound, let endDate = deliveryTimeRange.upperBound {
-            totalTime = endDate.timeIntervalSince(startDate)
-        }
     }
 
     func startTimer() {
