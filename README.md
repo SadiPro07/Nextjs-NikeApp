@@ -1,41 +1,42 @@
 import SwiftUI
 
-struct CustomTimerView: View {
-    let deliveryTimeRange: ClosedRange<Date>
+struct ContentView: View {
     @State private var elapsedTime: TimeInterval = 0.0
-    let lineWidth: CGFloat = 8.0
+    let totalTime: TimeInterval = 20 * 60 // 20 minutes in seconds
 
     var body: some View {
         VStack {
-            ZStack {
-                Circle()
-                    .stroke(Color.secondary, lineWidth: lineWidth)
-                    .frame(width: 100, height: 100)
+            ProgressView(value: progressValue(), total: 1.0)
+                .progressViewStyle(CircularProgressViewStyle(tint: progressColor()))
+                .scaleEffect(2.0) // Adjust the scale as needed
 
-                Circle()
-                    .trim(from: 0.0, to: CGFloat(elapsedTime / totalTime))
-                    .stroke(Color.blue, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut)
-
-                Text(timerText)
-                    .font(.caption)
-                    .foregroundColor(.blue)
-            }
+            Text(timerText())
+                .font(.caption)
+                .foregroundColor(progressColor())
         }
         .onAppear {
             startTimer()
         }
     }
 
-    var totalTime: TimeInterval {
-        if let startDate = deliveryTimeRange.lowerBound, let endDate = deliveryTimeRange.upperBound {
-            return endDate.timeIntervalSince(startDate)
-        }
-        return 0.0 // Default value if the range is not valid
+    func progressValue() -> Double {
+        return elapsedTime / totalTime
     }
 
-    var timerText: String {
+    func progressColor() -> Color {
+        let warningThreshold = 0.75 // Example warning threshold (adjust as needed)
+        let alertThreshold = 0.9 // Example alert threshold (adjust as needed)
+
+        if progressValue() >= alertThreshold {
+            return .red
+        } else if progressValue() >= warningThreshold {
+            return .orange
+        } else {
+            return .green
+        }
+    }
+
+    func timerText() -> String {
         let remainingTime = max(totalTime - elapsedTime, 0)
         let minutes = Int(remainingTime) / 60
         let seconds = Int(remainingTime) % 60
@@ -49,6 +50,12 @@ struct CustomTimerView: View {
             }
         }
         RunLoop.current.add(timer, forMode: .common)
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }
 
