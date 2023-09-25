@@ -1,59 +1,67 @@
-struct TimerView: View {
-    let minutes: Int
-    let seconds: Int
+import SwiftUI
 
-     ZStack {
-            Color(.systemBackground)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                Text("Meeting Reminder")
-                    .font(.title)
-                    .foregroundColor(.blue)
-                    .padding()
-                
-                TimerView()
-                    .frame(width: 100, height: 100)
-                
-                Text("Meeting Name")
-                    .font(.headline)
-                    .padding(.top, 20)
-                
-                Text("Meeting Date & Time")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                HStack {
-                    Button(action: {
-                        // Action for the first button
-                    }) {
-                        Text("Join Meeting")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        // Action for the second button
-                    }) {
-                        Text("Dismiss")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red)
-                            .cornerRadius(10)
+struct TimerProgressViewStyle: ProgressViewStyle {
+    var thresholdGreen: Double
+    var thresholdYellow: Double
+    
+    init(thresholdGreen: Double, thresholdYellow: Double) {
+        self.thresholdGreen = thresholdGreen
+        self.thresholdYellow = thresholdYellow
+    }
+    
+    func makeBody(configuration: Configuration) -> some View {
+        let fractionCompleted = configuration.fractionCompleted ?? 0.0
+        
+        // Calculate the color based on progress
+        var color: Color
+        if fractionCompleted <= thresholdGreen {
+            color = .green
+        } else if fractionCompleted <= thresholdYellow {
+            color = .yellow
+        } else {
+            color = .red
+        }
+        
+        return ZStack {
+            Circle()
+                .trim(from: 0.0, to: CGFloat(fractionCompleted))
+                .stroke(color, lineWidth: 10)
+                .rotationEffect(.degrees(-90))
+                .animation(.linear)
+        }
+    }
+}
+
+struct ContentView: View {
+    @State private var timerProgress: Double = 0.0
+    let timerDuration: Double = 600.0 // 10 minutes in seconds
+
+    var body: some View {
+        VStack {
+            ProgressView(value: timerProgress, total: timerDuration)
+                .progressViewStyle(TimerProgressViewStyle(thresholdGreen: 0.4, thresholdYellow: 0.7))
+                .onAppear {
+                    // Simulate timer progress
+                    Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                        if timerProgress < timerDuration {
+                            timerProgress += 1.0
+                        }
                     }
                 }
-                .padding()
-            }
-            .padding()
+            
+            Text("Timer Progress: \(Int(timerProgress)) seconds")
         }
+    }
+}
+
+@main
+struct TimerApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
 
 
 
