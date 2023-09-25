@@ -2,16 +2,58 @@ struct TimerView: View {
     let minutes: Int
     let seconds: Int
 
-       @ViewBuilder
-                        func getProgressViewColor() -> some View {
-                            if remainingTime <= 0 {
-                                Color.red
-                            } else if remainingTime <= 300 { // Change color when less than 5 minutes remaining
-                                Color.yellow
-                            } else {
-                                Color.green
-                            }
-                        }
+     ZStack {
+            Color(.systemBackground)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                Text("Meeting Reminder")
+                    .font(.title)
+                    .foregroundColor(.blue)
+                    .padding()
+                
+                TimerView()
+                    .frame(width: 100, height: 100)
+                
+                Text("Meeting Name")
+                    .font(.headline)
+                    .padding(.top, 20)
+                
+                Text("Meeting Date & Time")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                HStack {
+                    Button(action: {
+                        // Action for the first button
+                    }) {
+                        Text("Join Meeting")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        // Action for the second button
+                    }) {
+                        Text("Dismiss")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(10)
+                    }
+                }
+                .padding()
+            }
+            .padding()
+        }
 
 
 
