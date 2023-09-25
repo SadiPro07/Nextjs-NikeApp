@@ -2,20 +2,15 @@ struct TimerView: View {
     let minutes: Int
     let seconds: Int
 
-     let currentDate = Date()
-                        let endDate = Date().addingTimeInterval(context.state.estimatedDeliveryTime * 60) // Convert minutes to seconds
-                        let remainingTime = Int(endDate.timeIntervalSince(currentDate))
-                        
-                        let minutes = remainingTime / 60
-                        let seconds = remainingTime % 60
-                        let color: Color
-                        
-                        if remainingTime <= 0 {
-                            color = .red
-                        } else if remainingTime <= 300 { // Change color when less than 5 minutes remaining
-                            color = .yellow
-                        } else {
-                            color = .green
+       @ViewBuilder
+                        func getProgressViewColor() -> some View {
+                            if remainingTime <= 0 {
+                                Color.red
+                            } else if remainingTime <= 300 { // Change color when less than 5 minutes remaining
+                                Color.yellow
+                            } else {
+                                Color.green
+                            }
                         }
 
 
