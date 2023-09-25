@@ -2,76 +2,21 @@ struct TimerView: View {
     let minutes: Int
     let seconds: Int
 
-    var body: some View {
-        VStack {
-            Text("\(minutes) min")
-            Text("\(seconds) sec")
-        }
-        .font(.system(size: 12))
-        .foregroundColor(.secondary)
-    }
-}
- TimerView(minutes: context.state.estimatedDeliveryTime / 60, seconds: context.state.estimatedDeliveryTime % 60)
-
-struct ContentView: View {
-    @State private var elapsedTime: TimeInterval = 0.0
-    let totalTime: TimeInterval = 20 * 60 // 20 minutes in seconds
-
-    var body: some View {
-        VStack {
-            ProgressView(value: progressValue(), total: 1.0)
-                .progressViewStyle(CircularProgressViewStyle(tint: progressColor()))
-                .scaleEffect(2.0) // Adjust the scale as needed
-
-            Text(timerText())
-                .font(.caption)
-                .foregroundColor(progressColor())
-        }
-        .onAppear {
-            startTimer()
-        }
-    }
-
-    func progressValue() -> Double {
-        return elapsedTime / totalTime
-    }
-
-    func progressColor() -> Color {
-        let warningThreshold = 0.75 // Example warning threshold (adjust as needed)
-        let alertThreshold = 0.9 // Example alert threshold (adjust as needed)
-
-        if progressValue() >= alertThreshold {
-            return .red
-        } else if progressValue() >= warningThreshold {
-            return .orange
-        } else {
-            return .green
-        }
-    }
-
-    func timerText() -> String {
-        let remainingTime = max(totalTime - elapsedTime, 0)
-        let minutes = Int(remainingTime) / 60
-        let seconds = Int(remainingTime) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-
-    func startTimer() {
-        let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if elapsedTime < totalTime {
-                elapsedTime += 1.0
-            }
-        }
-        RunLoop.current.add(timer, forMode: .common)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
+     let currentDate = Date()
+                        let endDate = Date().addingTimeInterval(context.state.estimatedDeliveryTime * 60) // Convert minutes to seconds
+                        let remainingTime = Int(endDate.timeIntervalSince(currentDate))
+                        
+                        let minutes = remainingTime / 60
+                        let seconds = remainingTime % 60
+                        let color: Color
+                        
+                        if remainingTime <= 0 {
+                            color = .red
+                        } else if remainingTime <= 300 { // Change color when less than 5 minutes remaining
+                            color = .yellow
+                        } else {
+                            color = .green
+                        }
 
 
 
