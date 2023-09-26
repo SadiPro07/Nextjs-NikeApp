@@ -11,6 +11,17 @@ struct TimerProgressViewStyle: ProgressViewStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         let fractionCompleted = configuration.fractionCompleted ?? 0.0
+
+
+        do {
+   let activity = try Activity<RaceAttributes>.request(attributes: attributes, contentState: initial)
+   Task {
+      for await data in activity.pushTokenUpdates {
+         let myToken = data.map {String(format: "%02x", $0)}.joined()
+         // Keep this myToken for sending push notifications
+      }
+   }
+} catch {}
         
         // Calculate the color based on progress
         var color: Color
