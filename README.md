@@ -47,6 +47,21 @@ struct ContentView: View {
     @State private var timerProgress: Double = 0.0
     let timerDuration: Double = 600.0 // 10 minutes in seconds
 
+    func updateActivity(name: String){
+    do{
+      if #available(iOS 16.1, *){
+        let foodDeliveryContentState = FoodDeliveryAttributes.ContentState(leadingName: name)
+        Task{
+          for activity in Activity<FoodDeliveryAttributes>.activities {
+            await activity.update(using: foodDeliveryContentState)
+          }
+        }
+      }
+    }catch(_){
+      print("some error")
+    }
+  }
+
     var body: some View {
         VStack {
             ProgressView(value: timerProgress, total: timerDuration)
