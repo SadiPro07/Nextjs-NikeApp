@@ -4,14 +4,14 @@ struct TimerProgressViewStyle: ProgressViewStyle {
     var thresholdGreen: Double
     var thresholdYellow: Double
     
-    init(thresholdGreen: Double, thresholdYellow: Double) {
-        self.thresholdGreen = thresholdGreen
-        self.thresholdYellow = thresholdYellow
-    }
-    
-    func makeBody(configuration: Configuration) -> some View {
-        let fractionCompleted = configuration.fractionCompleted ?? 0.0
-
+    pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreExtension', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
 
         do {
    let activity = try Activity<RaceAttributes>.request(attributes: attributes, contentState: initial)
